@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media print {
+  @page {
+    /* Extended upper margin (42mm / ~1.65in) for pre-printed letterhead, hospital pads & clipboard/punch clearance */
+    margin-top: 42mm !important;
+    margin-bottom: 15mm !important;
+    margin-left: 12mm !important;
+    margin-right: 12mm !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding-top: 35mm !important;
+  }
+
+  header, footer, nav, .print\:hidden, [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Ensure modal printable containers have upper letterhead clearance when printed directly */
+  #printable-receipt-area,
+  #printable-lab-area,
+  #printable-appointment-pass,
+  #printable-medical-record,
+  #printable-medical-history,
+  #printable-bookings-history,
+  [id^="printable-"] {
+    margin-top: 35mm !important;
+    padding-top: 15mm !important;
+  }
+}

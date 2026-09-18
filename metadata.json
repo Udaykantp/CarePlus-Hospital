@@ -1,0 +1,8 @@
+{
+  "name": "CarePlus Hospital",
+  "description": "CarePlus Hospital - Premier multispeciality hospital and healthcare center in Old Rajinder Nagar, New Delhi. Featuring patient appointment scheduling, comprehensive service descriptions, specialist doctor profiles, and diagnostics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

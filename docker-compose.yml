@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL with Multi-Tenant Schema Isolation / Row Level Security (RLS)
+  postgres:
+    image: postgres:16-alpine
+    container_name: hhmc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hhmc_admin
+      POSTGRES_PASSWORD: hhmc_secure_password_2026
+      POSTGRES_DB: hhmc_clinic_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./server/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hhmc_admin -d hhmc_clinic_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis for Session Cache and Rate Limiting
+  redis:
+    image: redis:7-alpine
+    container_name: hhmc-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  # 3. Application Node.js / Vite Server
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hhmc-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://hhmc_admin:hhmc_secure_password_2026@postgres:5432/hhmc_clinic_platform
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: hhmc_jwt_super_secret_clinical_key_2026_hipaa
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+volumes:
+  pgdata:
+  redisdata:
