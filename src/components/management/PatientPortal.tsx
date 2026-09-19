@@ -17,7 +17,9 @@ import {
   CheckCircle2, 
   Phone, 
   PlusCircle, 
-  AlertCircle 
+  AlertCircle,
+  Activity,
+  TrendingUp
 } from 'lucide-react';
 import { BillingInvoice, LabOrder, MedicalRecordEntry, AppointmentRecord } from '../../types/management';
 import { AppointmentBooking } from '../../types';
@@ -25,6 +27,7 @@ import { PrintableMedicalRecordModal } from '../PrintableMedicalRecordModal';
 import { PrintableMedicalHistoryModal } from '../PrintableMedicalHistoryModal';
 import { PrintableAppointmentPassModal } from '../PrintableAppointmentPassModal';
 import { printMedicalRecordDocument, printMedicalHistoryDocument, printAppointmentPassDocument } from '../../utils/printUtils';
+import { HealthTrendsVisualization } from '../HealthTrendsVisualization';
 
 export const PatientPortal: React.FC = () => {
   const { currentTenant, currentUser } = useAuth();
@@ -34,11 +37,12 @@ export const PatientPortal: React.FC = () => {
     medicalRecords, 
     invoices, 
     labOrders,
+    nurseLogs,
     recordPayment,
     addAppointment
   } = useClinicData();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'records' | 'labs' | 'billing' | 'book'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'appointments' | 'records' | 'labs' | 'billing' | 'book'>('overview');
 
   // Print modals
   const [selectedInvoice, setSelectedInvoice] = useState<BillingInvoice | null>(null);
@@ -179,6 +183,18 @@ export const PatientPortal: React.FC = () => {
         </button>
 
         <button
+          onClick={() => setActiveTab('trends')}
+          className={`pb-3 px-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+            activeTab === 'trends'
+              ? 'border-teal-600 text-teal-700'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Activity className="w-4 h-4 text-teal-600" />
+          <span>Health Trends & Vitals</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('appointments')}
           className={`pb-3 px-3 border-b-2 transition-colors flex items-center gap-1.5 ${
             activeTab === 'appointments'
@@ -300,6 +316,31 @@ export const PatientPortal: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Longitudinal Health Trends Section within Overview */}
+          <div className="md:col-span-2">
+            <HealthTrendsVisualization
+              patient={currentPatient}
+              medicalRecords={patientRecords}
+              nurseLogs={nurseLogs}
+              showAddVitalButton={true}
+              compactMode={false}
+              title="Vitals & Health Trends (Blood Pressure, Glucose, Pulse)"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* TAB: HEALTH TRENDS & VITALS BIOMETRICS */}
+      {activeTab === 'trends' && (
+        <div className="space-y-6">
+          <HealthTrendsVisualization
+            patient={currentPatient}
+            medicalRecords={patientRecords}
+            nurseLogs={nurseLogs}
+            showAddVitalButton={true}
+            compactMode={false}
+          />
         </div>
       )}
 

@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ClinicDataProvider } from './context/ClinicDataContext';
+import { NotificationProvider, useNotifications } from './context/NotificationContext';
 import { DemoSwitcherBar } from './components/management/DemoSwitcherBar';
 import { LoginModal } from './components/management/LoginModal';
 import { HospitalPortalLayout } from './components/management/HospitalPortalLayout';
@@ -33,6 +34,8 @@ import { EmergencyModal } from './components/EmergencyModal';
 import { MyAppointmentsModal } from './components/MyAppointmentsModal';
 import { SymptomCheckerModal } from './components/SymptomCheckerModal';
 import { FloatingContactWidget } from './components/FloatingContactWidget';
+import { PushNotificationToast } from './components/PushNotificationToast';
+import { NotificationCenterDrawer } from './components/NotificationCenterDrawer';
 import { INITIAL_BOOKINGS } from './data/clinicData';
 import { AppointmentBooking } from './types';
 import { LayoutDashboard, ArrowRight } from 'lucide-react';
@@ -43,6 +46,11 @@ function MainApplicationContent() {
   const { currentUser, isManagementView, toggleViewMode } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { 
+    checkAndTrigger24hReminders, 
+    setOnAttendanceConfirmedCallback 
+  } = useNotifications();
 
   // Public website bookings state
   const [bookings, setBookings] = useState<AppointmentBooking[]>(() => {
@@ -60,6 +68,7 @@ function MainApplicationContent() {
   const [isBookingsModalOpen, setIsBookingsModalOpen] = useState(false);
   const [isSymptomCheckerOpen, setIsSymptomCheckerOpen] = useState(false);
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+  const [isNotificationCenterOpen, setIsNotificationCenterOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -68,6 +77,27 @@ function MainApplicationContent() {
       console.error('Error saving bookings', e);
     }
   }, [bookings]);
+
+  // Hook notification context attendance confirmation to update booking state
+  useEffect(() => {
+    setOnAttendanceConfirmedCallback((bookingId: string) => {
+      setBookings(prev =>
+        prev.map(b =>
+          b.id === bookingId
+            ? { ...b, attendanceConfirmed: true, attendanceConfirmedAt: new Date().toISOString() }
+            : b
+        )
+      );
+    });
+  }, [setOnAttendanceConfirmedCallback]);
+
+  // Automated 24h reminder scanner on mount & when bookings change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      checkAndTrigger24hReminders(bookings);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [bookings, checkAndTrigger24hReminders]);
 
   const handleBookingSuccess = (newBooking: AppointmentBooking) => {
     setBookings(prev => [newBooking, ...prev]);
@@ -112,7 +142,22 @@ function MainApplicationContent() {
         onOpenSymptomChecker={() => setIsSymptomCheckerOpen(true)}
         onOpenLogin={() => setIsLoginModalOpen(true)}
         onOpenEmergency={() => setIsEmergencyModalOpen(true)}
+        onOpenNotifications={() => setIsNotificationCenterOpen(true)}
         activeBookingsCount={activeBookingsCount}
+      />
+
+      {/* Real-Time Push Notification Toast Alert */}
+      <PushNotificationToast 
+        onOpenReschedule={(id) => navigate('/my-bookings')}
+        onOpenPass={(id) => navigate('/my-bookings')}
+      />
+
+      {/* Slide-over Notification Center Drawer */}
+      <NotificationCenterDrawer
+        isOpen={isNotificationCenterOpen}
+        onClose={() => setIsNotificationCenterOpen(false)}
+        bookings={bookings}
+        onOpenReschedule={(id) => navigate('/my-bookings')}
       />
 
       {/* 3. MAIN WORKSPACE / ROUTING CONTAINER */}
@@ -221,6 +266,7 @@ function MainApplicationContent() {
                   <MyBookingsPage 
                     bookings={bookings}
                     onCancelBooking={handleCancelBooking}
+                    onRescheduleBooking={handleRescheduleBooking}
                   />
                 } 
               />
@@ -312,7 +358,9 @@ export default function App() {
   return (
     <AuthProvider>
       <ClinicDataProvider>
-        <MainApplicationContent />
+        <NotificationProvider>
+          <MainApplicationContent />
+        </NotificationProvider>
       </ClinicDataProvider>
     </AuthProvider>
   );

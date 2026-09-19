@@ -13,20 +13,23 @@ import {
   ShieldCheck,
   Activity,
   X,
-  Clock
+  Clock,
+  TrendingUp
 } from 'lucide-react';
 import { useClinicData } from '../../context/ClinicDataContext';
 import { SyntheticPatient } from '../../types/management';
+import { HealthTrendsVisualization } from '../HealthTrendsVisualization';
 
 interface HospitalPatientsViewProps {
   onOpenConsultation?: (patientId: string) => void;
 }
 
 export const HospitalPatientsView: React.FC<HospitalPatientsViewProps> = ({ onOpenConsultation }) => {
-  const { patients } = useClinicData();
+  const { patients, medicalRecords, nurseLogs } = useClinicData();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGender, setSelectedGender] = useState<string>('all');
   const [activePatient, setActivePatient] = useState<SyntheticPatient | null>(null);
+  const [modalTab, setModalTab] = useState<'profile' | 'trends'>('profile');
 
   const filteredPatients = patients.filter(p => {
     const fullName = `${p.firstName} ${p.lastName}`;
@@ -155,7 +158,9 @@ export const HospitalPatientsView: React.FC<HospitalPatientsViewProps> = ({ onOp
       {/* Patient Detail Drawer / Modal */}
       {activePatient && (
         <div className="fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+          <div className={`bg-white rounded-2xl w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 max-h-[92vh] overflow-y-auto transition-all ${
+            modalTab === 'trends' ? 'max-w-4xl' : 'max-w-xl'
+          }`}>
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 font-bold text-lg flex items-center justify-center">
@@ -167,63 +172,120 @@ export const HospitalPatientsView: React.FC<HospitalPatientsViewProps> = ({ onOp
                 </div>
               </div>
               <button
-                onClick={() => setActivePatient(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                onClick={() => {
+                  setActivePatient(null);
+                  setModalTab('profile');
+                }}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="py-4 space-y-4 text-xs">
-              <div className="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Age & Gender</span>
-                  <span className="font-bold text-slate-800">{activePatient.age} Yrs &bull; {activePatient.gender}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Blood Group</span>
-                  <span className="font-bold text-rose-700">{activePatient.bloodGroup}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Emergency Contact</span>
-                  <span className="font-bold text-slate-800">{activePatient.emergencyContact?.relationship || 'Family'}</span>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
-                  <HeartPulse className="w-4 h-4 text-rose-500" />
-                  <span>Chronic Medical Conditions</span>
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {activePatient.chronicConditions.map((cond, i) => (
-                    <span key={i} className="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg font-medium">
-                      {cond}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Insurance & TPA Policy</span>
-                </h4>
-                {activePatient.insurancePolicyNumber ? (
-                  <div className="p-3 border border-slate-200 rounded-xl bg-white space-y-1">
-                    <p className="font-bold text-slate-800">{activePatient.insuranceProvider}</p>
-                    <p className="text-slate-500 font-mono">Policy #: {activePatient.insurancePolicyNumber}</p>
-                  </div>
-                ) : (
-                  <p className="text-slate-400 italic">Self-Pay / Cash Patient</p>
-                )}
-              </div>
+            {/* Modal Internal Tabs */}
+            <div className="flex items-center gap-2 border-b border-slate-200 pt-3 pb-1 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setModalTab('profile')}
+                className={`pb-2 px-3 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  modalTab === 'profile'
+                    ? 'border-blue-600 text-blue-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <UserCheck className="w-4 h-4" />
+                <span>Demographics & Insurance</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setModalTab('trends')}
+                className={`pb-2 px-3 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  modalTab === 'trends'
+                    ? 'border-teal-600 text-teal-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <Activity className="w-4 h-4 text-teal-600" />
+                <span>Health Trends & Vitals (Recharts)</span>
+              </button>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+            {modalTab === 'profile' ? (
+              <div className="py-4 space-y-4 text-xs">
+                <div className="grid grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Age & Gender</span>
+                    <span className="font-bold text-slate-800">{activePatient.age} Yrs &bull; {activePatient.gender}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Blood Group</span>
+                    <span className="font-bold text-rose-700">{activePatient.bloodGroup}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Emergency Contact</span>
+                    <span className="font-bold text-slate-800">{activePatient.emergencyContact?.relationship || 'Family'}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                    <HeartPulse className="w-4 h-4 text-rose-500" />
+                    <span>Chronic Medical Conditions</span>
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {activePatient.chronicConditions.map((cond, i) => (
+                      <span key={i} className="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg font-medium">
+                        {cond}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <span>Insurance & TPA Policy</span>
+                  </h4>
+                  {activePatient.insurancePolicyNumber ? (
+                    <div className="p-3 border border-slate-200 rounded-xl bg-white space-y-1">
+                      <p className="font-bold text-slate-800">{activePatient.insuranceProvider}</p>
+                      <p className="text-slate-500 font-mono">Policy #: {activePatient.insurancePolicyNumber}</p>
+                    </div>
+                  ) : (
+                    <p className="text-slate-400 italic">Self-Pay / Cash Patient</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="py-4">
+                <HealthTrendsVisualization
+                  patient={activePatient}
+                  medicalRecords={medicalRecords}
+                  nurseLogs={nurseLogs}
+                  showAddVitalButton={true}
+                  compactMode={false}
+                />
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+              {modalTab === 'profile' && (
+                <button
+                  type="button"
+                  onClick={() => setModalTab('trends')}
+                  className="px-3 py-1.5 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-lg border border-teal-200 flex items-center gap-1.5 cursor-pointer"
+                >
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  <span>View Vitals Charts</span>
+                </button>
+              )}
+              {modalTab === 'trends' && <div />}
               <button
-                onClick={() => setActivePatient(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
+                onClick={() => {
+                  setActivePatient(null);
+                  setModalTab('profile');
+                }}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
               >
                 Close
               </button>

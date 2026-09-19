@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { CLINIC_INFO } from '../data/clinicData';
 import { GlobalSearchBar } from './GlobalSearchBar';
+import { useNotifications } from '../context/NotificationContext';
 
 interface NavbarProps {
   onOpenScheduler: (prefill?: { doctorId?: string; departmentId?: string }) => void;
@@ -39,6 +40,7 @@ interface NavbarProps {
   onOpenSymptomChecker: () => void;
   onOpenLogin?: () => void;
   onOpenEmergency?: () => void;
+  onOpenNotifications?: () => void;
   activeBookingsCount: number;
 }
 
@@ -48,8 +50,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSymptomChecker,
   onOpenLogin,
   onOpenEmergency,
+  onOpenNotifications,
   activeBookingsCount
 }) => {
+  const { unreadCount } = useNotifications();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [departmentsDropdownOpen, setDepartmentsDropdownOpen] = useState(false);
@@ -268,9 +272,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           />
         </div>
 
-        {/* Action Buttons: Login & Book Appointment (+ My Visits) */}
-        <div className="flex items-center gap-2.5 lg:gap-3 flex-shrink-0">
+        {/* Action Buttons: Login & Book Appointment (+ My Visits & 24h Alerts) */}
+        <div className="flex items-center gap-2 lg:gap-2.5 flex-shrink-0">
           
+          {/* 24h Push Notification Bell Button */}
+          <button
+            type="button"
+            onClick={onOpenNotifications}
+            className="relative p-2 rounded-xl text-slate-700 hover:text-[#00897b] hover:bg-teal-50 border border-slate-200 transition-all cursor-pointer shadow-2xs active:scale-95"
+            title="24h Visit Reminders & Push Notification Center"
+            aria-label="Open 24h Visit Reminders"
+          >
+            <Bell className="w-4 h-4 text-slate-700" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-teal-600 text-[9px] font-extrabold text-white shadow-xs">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                <span className="relative">{unreadCount}</span>
+              </span>
+            )}
+          </button>
+
           {/* Active Bookings badge if any */}
           {activeBookingsCount > 0 && (
             <button
@@ -533,17 +554,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile Right Controls: Notification Bell & Hamburger */}
         <div className="flex items-center gap-1">
           
-          {/* Notification Bell with Badge "3" */}
+          {/* Notification Bell with Badge */}
           <button
             type="button"
-            onClick={onOpenBookings}
+            onClick={onOpenNotifications || onOpenBookings}
             className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all relative cursor-pointer"
             aria-label="View Appointments and Notifications"
           >
             <Bell className="w-5 h-5 text-slate-700" />
-            <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">
-              {activeBookingsCount > 0 ? activeBookingsCount : 3}
-            </span>
+            {unreadCount > 0 ? (
+              <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-teal-600 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-xs">
+                {unreadCount}
+              </span>
+            ) : activeBookingsCount > 0 ? (
+              <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-teal-700 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">
+                {activeBookingsCount}
+              </span>
+            ) : null}
           </button>
 
           {/* Mobile Drawer Hamburger Button */}

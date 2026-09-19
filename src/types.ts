@@ -59,6 +59,26 @@ export interface AppointmentBooking {
   fee: number;
   bookedAt: string;
   cancellationReason?: string;
+  reminderSent24h?: boolean;
+  reminderSentAt?: string;
+  attendanceConfirmed?: boolean;
+  attendanceConfirmedAt?: string;
+}
+
+export interface PushNotificationItem {
+  id: string;
+  bookingId?: string;
+  referenceCode?: string;
+  type: '24h_reminder' | 'attendance_confirmed' | 'booking_status' | 'reschedule_prompt';
+  title: string;
+  message: string;
+  doctorName?: string;
+  date?: string;
+  timeSlot?: string;
+  timestamp: string;
+  isRead: boolean;
+  attendanceConfirmed?: boolean;
+  priority: 'high' | 'normal';
 }
 
 export interface DiagnosticTest {

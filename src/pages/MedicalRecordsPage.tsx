@@ -24,14 +24,15 @@ import { PrintableMedicalRecordModal } from '../components/PrintableMedicalRecor
 import { PrintableMedicalHistoryModal } from '../components/PrintableMedicalHistoryModal';
 import { printMedicalRecordDocument, printMedicalHistoryDocument } from '../utils/printUtils';
 import { downloadMedicalRecordPDF, downloadMedicalHistoryPDF } from '../utils/pdfGenerator';
+import { HealthTrendsVisualization } from '../components/HealthTrendsVisualization';
 
 export const MedicalRecordsPage: React.FC = () => {
-  const { patients, medicalRecords } = useClinicData();
+  const { patients, medicalRecords, nurseLogs } = useClinicData();
 
   // Search by phone, name, or MRN
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPatientId, setSelectedPatientId] = useState<string>(patients[0]?.id || 'pat-1001');
-  const [filterCategory, setFilterCategory] = useState<'all' | 'prescriptions' | 'vitals'>('all');
+  const [filterCategory, setFilterCategory] = useState<'all' | 'prescriptions' | 'vitals' | 'trends'>('all');
 
   // Print Modals State
   const [selectedRecordForPrint, setSelectedRecordForPrint] = useState<MedicalRecordEntry | null>(null);
@@ -204,8 +205,8 @@ export const MedicalRecordsPage: React.FC = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setFilterCategory('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
@@ -215,6 +216,17 @@ export const MedicalRecordsPage: React.FC = () => {
             }`}
           >
             All Consultations ({patientRecords.length})
+          </button>
+          <button
+            onClick={() => setFilterCategory('trends')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 ${
+              filterCategory === 'trends'
+                ? 'bg-teal-700 text-white shadow-xs'
+                : 'bg-white text-teal-700 hover:bg-teal-50 border border-teal-200'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5 text-teal-600" />
+            <span>Health Trends (Recharts)</span>
           </button>
           <button
             onClick={() => setFilterCategory('prescriptions')}
@@ -243,7 +255,35 @@ export const MedicalRecordsPage: React.FC = () => {
         </span>
       </div>
 
+      {/* When Trends Tab is selected, show the full interactive Recharts visualization */}
+      {filterCategory === 'trends' && activePatient && (
+        <div className="space-y-4">
+          <HealthTrendsVisualization
+            patient={activePatient}
+            medicalRecords={patientRecords}
+            nurseLogs={nurseLogs}
+            showAddVitalButton={true}
+            compactMode={false}
+          />
+        </div>
+      )}
+
+      {/* When Vitals Tab is selected, show trends summary on top followed by records */}
+      {filterCategory === 'vitals' && activePatient && (
+        <div className="space-y-4 mb-2">
+          <HealthTrendsVisualization
+            patient={activePatient}
+            medicalRecords={patientRecords}
+            nurseLogs={nurseLogs}
+            showAddVitalButton={true}
+            compactMode={false}
+            title={`Vitals Trends & History: ${activePatient.firstName} ${activePatient.lastName}`}
+          />
+        </div>
+      )}
+
       {/* Records Listing */}
+      {filterCategory !== 'trends' && (
       <div className="space-y-4">
         {patientRecords.length === 0 ? (
           <div className="bg-white rounded-3xl border border-slate-200/80 p-12 text-center space-y-4 shadow-xs">
@@ -417,6 +457,7 @@ export const MedicalRecordsPage: React.FC = () => {
           ))
         )}
       </div>
+      )}
 
       {/* Print Modals */}
       <PrintableMedicalRecordModal

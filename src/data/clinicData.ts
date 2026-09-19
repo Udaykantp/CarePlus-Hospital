@@ -1003,6 +1003,18 @@ export const REVIEWS: Review[] = [
   }
 ];
 
+const getTomorrowDateStr = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
+};
+
+const getInThreeDaysDateStr = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 3);
+  return d.toISOString().split('T')[0];
+};
+
 export const INITIAL_BOOKINGS: AppointmentBooking[] = [
   {
     id: "demo-bk-101",
@@ -1016,13 +1028,38 @@ export const INITIAL_BOOKINGS: AppointmentBooking[] = [
     doctorName: "Dr. Mehak Arora (PT)",
     departmentId: "physiotherapy",
     departmentName: "Physiotherapy & Advanced Rehabilitation",
-    date: "2026-09-22",
+    date: getTomorrowDateStr(),
     timeSlot: "10:30 AM - 11:15 AM",
     consultationType: "In-Clinic Consultation",
     symptoms: "Lower back stiffness and radiating pain in right calf following gym deadlifts.",
     status: "confirmed",
     paymentMode: "Pay at Clinic",
     fee: 700,
-    bookedAt: "2026-09-17T11:30:00.000Z"
+    bookedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    reminderSent24h: false,
+    attendanceConfirmed: false
+  },
+  {
+    id: "demo-bk-102",
+    referenceCode: "HHMC-2026-4819",
+    patientName: "Sunita Sharma",
+    patientAge: 56,
+    patientGender: "Female",
+    patientPhone: "+91 98765 43210",
+    patientEmail: "sunita.sharma@gmail.com",
+    doctorId: "dr-bibhu-bishwas",
+    doctorName: "Dr. Bibhu Anand Bishwas",
+    departmentId: "internal-medicine",
+    departmentName: "Internal Medicine & Diabetology",
+    date: getInThreeDaysDateStr(),
+    timeSlot: "05:00 PM - 05:45 PM",
+    consultationType: "In-Clinic Consultation",
+    symptoms: "Routine diabetes and blood pressure check-up with quarterly HbA1c review.",
+    status: "confirmed",
+    paymentMode: "Pay at Clinic",
+    fee: 900,
+    bookedAt: new Date(Date.now() - 86400000).toISOString(),
+    reminderSent24h: false,
+    attendanceConfirmed: false
   }
 ];
