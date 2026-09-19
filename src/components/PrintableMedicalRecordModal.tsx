@@ -2,9 +2,11 @@ import React from 'react';
 import { MedicalRecordEntry, SyntheticPatient } from '../types/management';
 import { CLINIC_INFO } from '../data/clinicData';
 import { printMedicalRecordDocument } from '../utils/printUtils';
+import { downloadMedicalRecordPDF } from '../utils/pdfGenerator';
 import { 
   X, 
   Printer, 
+  Download,
   ShieldCheck, 
   Pill, 
   Activity, 
@@ -47,11 +49,19 @@ export const PrintableMedicalRecordModal: React.FC<PrintableMedicalRecordModalPr
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => downloadMedicalRecordPDF(record, patient)}
+              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 shadow-xs"
+              title="Download Official Record PDF"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
+            </button>
+            <button
               onClick={handlePrint}
-              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 border border-slate-700"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print / Save PDF</span>
+              <span>Print</span>
             </button>
             <button
               onClick={onClose}

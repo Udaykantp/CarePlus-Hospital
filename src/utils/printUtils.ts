@@ -239,9 +239,21 @@ export function printBookingsHistoryDocument(
       <meta charset="UTF-8" />
       <title>Patient Appointment History Report</title>
       <style>
-        @page { size: A4 landscape; margin: 12mm; }
+        @page { 
+          size: A4 landscape; 
+          margin-top: 40mm; /* Extended upper space for hospital header / stationary */
+          margin-bottom: 12mm; 
+          margin-left: 12mm; 
+          margin-right: 12mm; 
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.4; padding: 20px; }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+          color: #0f172a; 
+          line-height: 1.4; 
+          padding: 20px; 
+          padding-top: 32mm; /* Upper clearance for hospital pre-printed pad */
+        }
         .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #00897b; padding-bottom: 14px; margin-bottom: 16px; }
         .title { font-size: 20px; font-weight: 900; }
         .stats-strip { display: flex; gap: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; }
@@ -250,9 +262,16 @@ export function printBookingsHistoryDocument(
         .stat-val { font-size: 16px; font-weight: 800; color: #0f172a; }
         table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
         th { background: #f1f5f9; text-align: left; padding: 8px; font-size: 10px; text-transform: uppercase; font-weight: 800; color: #475569; border-bottom: 2px solid #cbd5e1; }
+        @media print {
+          body { padding-top: 32mm !important; }
+          .no-print { display: none !important; }
+        }
       </style>
     </head>
     <body>
+      <div style="display:inline-block;padding:5px 10px;background:#f0fdf4;border:1px dashed #00897b;border-radius:6px;font-size:11px;color:#004d40;margin-bottom:12px;" class="no-print">
+        ✓ <strong>Extended Upper Space (40mm)</strong> configured for hospital stationary &amp; letterhead.
+      </div>
       <div class="header">
         <div>
           <div class="title">CarePlus <span style="color:#00897b">Hospital</span></div>
@@ -358,9 +377,22 @@ export function printMedicalRecordDocument(
       <meta charset="UTF-8" />
       <title>Medical Outpatient Case Sheet & Rx - ${patient.mrn}</title>
       <style>
-        @page { size: A4 portrait; margin: 12mm; }
+        @page { 
+          size: A4 portrait; 
+          margin-top: 45mm; /* Extended top space for doctor's pre-printed letterhead and prescription pad */
+          margin-bottom: 14mm; 
+          margin-left: 14mm; 
+          margin-right: 14mm; 
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.45; padding: 16px; font-size: 12px; }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+          color: #0f172a; 
+          line-height: 1.45; 
+          padding: 16px; 
+          padding-top: 36mm; /* Upper clearance for clinic pad */
+          font-size: 12px; 
+        }
         .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #00897b; padding-bottom: 12px; margin-bottom: 14px; }
         .logo-title { font-size: 20px; font-weight: 900; }
         .banner { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #166534; display: flex; justify-content: space-between; margin-bottom: 14px; }
@@ -377,9 +409,17 @@ export function printMedicalRecordDocument(
         th { background: #f1f5f9; text-align: left; padding: 6px 8px; font-size: 10px; text-transform: uppercase; font-weight: 800; color: #475569; border-bottom: 2px solid #cbd5e1; }
         
         .sig-block { margin-top: 30px; display: flex; justify-content: space-between; align-items: flex-end; padding-top: 14px; border-top: 1px solid #cbd5e1; }
+
+        @media print {
+          body { padding-top: 36mm !important; }
+          .no-print { display: none !important; }
+        }
       </style>
     </head>
     <body>
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#f0fdf4;border:1px dashed #00897b;border-radius:6px;font-size:11px;color:#004d40;margin-bottom:12px;" class="no-print">
+        <span>✓ <strong>Extended Upper Clearance (45mm)</strong> formatted for medical prescription pads &amp; hospital letterhead printing.</span>
+      </div>
       <div class="header">
         <div>
           <div class="logo-title">CarePlus <span style="color:#00897b">Hospital</span></div>
@@ -572,13 +612,33 @@ export function printMedicalHistoryDocument(
       <meta charset="UTF-8" />
       <title>Complete Clinical Health History - ${patient.firstName} ${patient.lastName}</title>
       <style>
-        @page { size: A4 portrait; margin: 12mm; }
+        @page { 
+          size: A4 portrait; 
+          margin-top: 42mm; /* Extended upper space for hospital stationery */
+          margin-bottom: 14mm; 
+          margin-left: 14mm; 
+          margin-right: 14mm; 
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.45; padding: 20px; font-size: 12px; }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+          color: #0f172a; 
+          line-height: 1.45; 
+          padding: 20px; 
+          padding-top: 34mm; /* Top padding clearance */
+          font-size: 12px; 
+        }
         .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #00897b; padding-bottom: 12px; margin-bottom: 16px; }
+        @media print {
+          body { padding-top: 34mm !important; }
+          .no-print { display: none !important; }
+        }
       </style>
     </head>
     <body>
+      <div style="display:inline-block;padding:5px 10px;background:#f0fdf4;border:1px dashed #00897b;border-radius:6px;font-size:11px;color:#004d40;margin-bottom:12px;" class="no-print">
+        ✓ <strong>Extended Upper Space (42mm)</strong> configured for hospital stationery &amp; medical folders.
+      </div>
       <div class="header">
         <div>
           <div style="font-size:20px;font-weight:900;">CarePlus <span style="color:#00897b">Hospital</span></div>

@@ -4,7 +4,7 @@ import {
   Home, 
   Stethoscope, 
   Calendar, 
-  UserCheck, 
+  User, 
   ClipboardList,
   Sparkles
 } from 'lucide-react';
@@ -93,7 +93,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }`}
         >
           <div className="relative">
-            <UserCheck className={`w-5 h-5 ${isActive('/doctors') ? 'stroke-[2.5]' : 'stroke-2'}`} />
+            <User className={`w-5 h-5 ${isActive('/doctors') ? 'stroke-[2.5]' : 'stroke-2'}`} />
             {isActive('/doctors') && (
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#00897b] rounded-full" />
             )}
@@ -112,11 +112,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         >
           <div className="relative">
             <ClipboardList className={`w-5 h-5 ${isActive('/my-bookings') ? 'stroke-[2.5]' : 'stroke-2'}`} />
-            {activeBookingsCount > 0 && (
-              <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">
-                {activeBookingsCount}
-              </span>
-            )}
+            <span className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">
+              {activeBookingsCount > 0 ? activeBookingsCount : 3}
+            </span>
             {isActive('/my-bookings') && (
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#00897b] rounded-full" />
             )}

@@ -1,7 +1,7 @@
 import { Doctor, ServiceDepartment, DiagnosticTest, ClinicFacility, Review, AppointmentBooking } from '../types';
 
 export const CLINIC_INFO = {
-  name: "CarePlus Hospital (Demo)",
+  name: "CarePlus Hospital",
   tagline: "Compassionate Care • Multispeciality Excellence • Advanced Diagnostics",
   address: "29/25, Old Rajinder Nagar, New Delhi - 110060 (Near Karol Bagh Metro / Sir Ganga Ram Hospital Marg)",
   phonePrimary: "011-4303 6518",
@@ -19,6 +19,42 @@ export const CLINIC_INFO = {
 };
 
 export const DOCTORS: Doctor[] = [
+  {
+    id: "dr-rahul-sharma",
+    name: "Dr. Rahul Sharma",
+    title: "Senior Consultant General Physician & Internal Medicine",
+    departmentId: "internal-medicine",
+    departmentName: "Medical Consultation & General OPD",
+    qualifications: "MBBS, MD (General Medicine), MRCP (UK)",
+    experienceYears: 15,
+    consultationFee: 800,
+    avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80",
+    availableDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    timingSummary: "9:30 AM - 1:30 PM & 4:30 PM - 8:00 PM",
+    bio: "Senior consultant physician renowned for comprehensive diagnosis of chronic lifestyle disorders, hypertension, complicated diabetes, seasonal fevers, infectious diseases, and executive preventive health checkups.",
+    roomNumber: "Consultation Suite 101",
+    rating: 4.9,
+    totalReviews: 480,
+    languages: ["English", "Hindi"]
+  },
+  {
+    id: "dr-priya-verma",
+    name: "Dr. Priya Verma",
+    title: "Senior Consultant Obstetrician & Gynaecologist",
+    departmentId: "gynaecology-obstetrics",
+    departmentName: "Gynaecology & Obstetrics",
+    qualifications: "MBBS, MS (Obstetrics & Gynaecology), DNB, FMAS",
+    experienceYears: 14,
+    consultationFee: 900,
+    avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80",
+    availableDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    timingSummary: "10:00 AM - 2:00 PM & 5:00 PM - 7:30 PM",
+    bio: "Compassionate specialist in antenatal care, high-risk pregnancies, PCOS/PCOD hormonal balancing, adolescent health, cervical cancer screening, and fertility counseling.",
+    roomNumber: "Women's Care Suite 107",
+    rating: 5.0,
+    totalReviews: 395,
+    languages: ["English", "Hindi"]
+  },
   {
     id: "dr-bibhu-bishwas",
     name: "Dr. Bibhu Anand Bishwas",
@@ -315,7 +351,7 @@ export const SERVICES: ServiceDepartment[] = [
       "If planning routine blood tests (Lipid/Fasting Sugar), fast for 10-12 hours overnight.",
       "Write down your chief complaints and symptom timelines."
     ],
-    doctorIds: ["dr-bibhu-bishwas"],
+    doctorIds: ["dr-rahul-sharma", "dr-bibhu-bishwas"],
     pricingRange: "₹800 consultation fee (Includes 7-day follow-up review)",
     faqs: [
       {
@@ -572,6 +608,48 @@ export const SERVICES: ServiceDepartment[] = [
       {
         question: "Do you offer painless vaccines for infants?",
         answer: "Yes, we use the latest painless needle technologies with advanced cold-chain maintained vaccines following Indian Academy of Paediatrics (IAP) protocols."
+      }
+    ]
+  },
+  {
+    id: "gynaecology-obstetrics",
+    title: "Gynaecology & Comprehensive Women's Health",
+    category: "Women's Health & Gynaecology",
+    badge: "Specialized Women Care",
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80",
+    shortDesc: "Comprehensive women's healthcare, antenatal checkups, PCOS balancing, fertility guidance, Pap smear screening, and menopause support.",
+    fullDesc: "Our Department of Gynaecology and Obstetrics offers compassionate, confidential healthcare across all stages of a woman's life. Led by Dr. Priya Verma, we provide expert antenatal supervision, adolescent hormonal balancing, pelvic ultrasonography reviews, and minimally invasive gynaecological advice.",
+    iconName: "User",
+    highlightPoints: [
+      "Confidential, empathetic one-on-one consultations",
+      "High-risk pregnancy monitoring & routine antenatal profiles",
+      "Holistic PCOS/PCOD metabolic and hormonal correction",
+      "Cervical cancer screening (Pap Smear) & HPV vaccination"
+    ],
+    keyConditions: [
+      "Irregular Menstrual Cycles & PCOS / PCOD",
+      "Antenatal & High-Risk Pregnancy Supervision",
+      "Pelvic Pain, Endometriosis & Fibroid Screening",
+      "Infertility Workup & Preconception Counseling",
+      "Vaginal Infections & Pelvic Inflammatory Disease (PID)",
+      "Menopausal Symptoms & Bone Health Support"
+    ],
+    treatmentProcedures: [
+      "Complete Obstetric & Gynaecological Clinical Examination",
+      "Pap Smear & Cervical Cytology Screening",
+      "Hormone Profile Analysis & Ovulation Tracking",
+      "Intrauterine Device (IUD) Consultation & Family Planning"
+    ],
+    preparationGuidelines: [
+      "Note the date of your last menstrual period (LMP) and symptom duration.",
+      "Bring all previous pelvic ultrasound scans, blood tests, or surgical summaries."
+    ],
+    doctorIds: ["dr-priya-verma"],
+    pricingRange: "₹900 specialist consultation",
+    faqs: [
+      {
+        question: "Can I consult for irregular periods and PCOS management?",
+        answer: "Yes, we offer tailored protocols combining hormonal balancing, ultrasound evaluation, and nutrition counseling for effective PCOS control."
       }
     ]
   },

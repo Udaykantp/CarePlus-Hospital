@@ -23,6 +23,7 @@ import { MedicalRecordEntry, SyntheticPatient } from '../types/management';
 import { PrintableMedicalRecordModal } from '../components/PrintableMedicalRecordModal';
 import { PrintableMedicalHistoryModal } from '../components/PrintableMedicalHistoryModal';
 import { printMedicalRecordDocument, printMedicalHistoryDocument } from '../utils/printUtils';
+import { downloadMedicalRecordPDF, downloadMedicalHistoryPDF } from '../utils/pdfGenerator';
 
 export const MedicalRecordsPage: React.FC = () => {
   const { patients, medicalRecords } = useClinicData();
@@ -87,13 +88,26 @@ export const MedicalRecordsPage: React.FC = () => {
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           {activePatient && patientRecords.length > 0 && (
-            <button
-              onClick={handleOpenPrintHistory}
-              className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-teal-400"
-            >
-              <Printer className="w-3.5 h-3.5 text-teal-700" />
-              <span>Print Full Medical History</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => downloadMedicalHistoryPDF(activePatient, patientRecords)}
+                className="px-3.5 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                title="Download Patient History PDF file"
+              >
+                <Download className="w-3.5 h-3.5 text-teal-700" />
+                <span>Download History (PDF)</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleOpenPrintHistory}
+                className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-teal-400"
+              >
+                <Printer className="w-3.5 h-3.5 text-teal-700" />
+                <span className="hidden md:inline">Print Full Medical History</span>
+                <span className="md:hidden">Print</span>
+              </button>
+            </div>
           )}
 
           <Link
@@ -272,26 +286,26 @@ export const MedicalRecordsPage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Print Action Buttons */}
+                {/* PDF Download & Print Action Buttons */}
                 <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => activePatient && downloadMedicalRecordPDF(record, activePatient)}
+                    className="px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
+                    title="Download Official Record PDF file"
+                  >
+                    <Download className="w-3.5 h-3.5 text-teal-700" />
+                    <span>Download PDF</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => handleOpenPrintRecord(record)}
                     className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
                     title="Preview & Print Case Sheet"
                   >
-                    <Printer className="w-3.5 h-3.5 text-teal-700" />
-                    <span>Print Record</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleDirectPrintRecord(record)}
-                    className="p-1.5 text-slate-400 hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors cursor-pointer"
-                    title="Quick Print Pass"
-                    aria-label="Quick Print Record"
-                  >
-                    <Download className="w-4 h-4" />
+                    <Printer className="w-3.5 h-3.5 text-slate-600" />
+                    <span>Print</span>
                   </button>
                 </div>
               </div>

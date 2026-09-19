@@ -2,7 +2,8 @@ import React from 'react';
 import { AppointmentBooking } from '../types';
 import { CLINIC_INFO } from '../data/clinicData';
 import { printBookingsHistoryDocument } from '../utils/printUtils';
-import { X, Printer, Calendar, ArrowRight, ShieldCheck } from 'lucide-react';
+import { downloadBookingsHistoryPDF } from '../utils/pdfGenerator';
+import { X, Printer, Download, Calendar, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface PrintableBookingsHistoryModalProps {
   isOpen: boolean;
@@ -42,11 +43,19 @@ export const PrintableBookingsHistoryModal: React.FC<PrintableBookingsHistoryMod
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => downloadBookingsHistoryPDF(bookings, patientPhoneQuery)}
+              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 shadow-xs"
+              title="Download Appointment History Ledger PDF"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
+            </button>
+            <button
               onClick={handlePrint}
-              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 border border-slate-700"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print History Ledger</span>
+              <span>Print</span>
             </button>
             <button
               onClick={onClose}

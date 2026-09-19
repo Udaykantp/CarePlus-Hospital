@@ -39,15 +39,31 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onSelectService, isL
   
   const categories = ['all', ...Array.from(new Set(SERVICES.map(s => s.category)))];
 
+  const findMatchedCategory = (param?: string | null) => {
+    if (!param) return 'all';
+    const decoded = decodeURIComponent(param).trim().toLowerCase();
+    // 1. Direct category match
+    const catMatch = categories.find(c => c.toLowerCase() === decoded);
+    if (catMatch) return catMatch;
+    // 2. Service ID or partial title match
+    const svcMatch = SERVICES.find(s => 
+      s.id.toLowerCase() === decoded ||
+      s.id.toLowerCase().replace(/[^a-z0-9]/g, '') === decoded.replace(/[^a-z0-9]/g, '') ||
+      s.category.toLowerCase().includes(decoded) ||
+      s.title.toLowerCase().includes(decoded)
+    );
+    if (svcMatch) return svcMatch.category;
+    return 'all';
+  };
+
   // Derive initial category from query param or route slug
-  const activeParam = searchParams.get('category') || (categorySlug ? decodeURIComponent(categorySlug) : 'all');
-  const matchedCategory = categories.find(c => c.toLowerCase() === activeParam.toLowerCase()) || 'all';
+  const activeParam = searchParams.get('category') || categorySlug;
+  const matchedCategory = findMatchedCategory(activeParam);
   const [selectedCategory, setSelectedCategory] = useState<string>(matchedCategory);
 
   useEffect(() => {
-    const currentParam = searchParams.get('category') || (categorySlug ? decodeURIComponent(categorySlug) : 'all');
-    const matched = categories.find(c => c.toLowerCase() === currentParam.toLowerCase()) || 'all';
-    setSelectedCategory(matched);
+    const currentParam = searchParams.get('category') || categorySlug;
+    setSelectedCategory(findMatchedCategory(currentParam));
   }, [searchParams, categorySlug]);
 
   // Handle perceived loading state when data is being fetched or category filtered

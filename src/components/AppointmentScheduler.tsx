@@ -386,6 +386,7 @@ export const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({
                       <img 
                         src={doc.avatar} 
                         alt={doc.name} 
+                        referrerPolicy="no-referrer"
                         className="w-16 h-16 rounded-xl object-cover border border-slate-200 flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">

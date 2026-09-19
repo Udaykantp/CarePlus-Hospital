@@ -237,14 +237,6 @@ function MainApplicationContent() {
                 element={<ReviewsPage />} 
               />
               <Route 
-                path="/facilities" 
-                element={
-                  <DiagnosticsPage 
-                    onOpenScheduler={handleOpenScheduler}
-                  />
-                } 
-              />
-              <Route 
                 path="*" 
                 element={<Navigate to="/" replace />} 
               />

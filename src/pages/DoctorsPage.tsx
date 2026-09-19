@@ -31,14 +31,30 @@ export const DoctorsPage: React.FC<DoctorsPageProps> = ({ onSelectDoctor, isLoad
   
   const specialties = ['all', ...Array.from(new Set(DOCTORS.map(d => d.departmentName)))];
 
-  const activeSpecialtyParam = searchParams.get('specialty') || (specialtySlug ? decodeURIComponent(specialtySlug) : 'all');
-  const matchedSpecialty = specialties.find(s => s.toLowerCase() === activeSpecialtyParam.toLowerCase()) || 'all';
+  const findMatchedSpecialty = (param?: string | null) => {
+    if (!param) return 'all';
+    const decoded = decodeURIComponent(param).trim().toLowerCase();
+    // 1. Direct match with departmentName
+    const exact = specialties.find(s => s.toLowerCase() === decoded);
+    if (exact) return exact;
+    // 2. Match with doctor departmentId or substring
+    const doc = DOCTORS.find(d => 
+      d.departmentId.toLowerCase() === decoded ||
+      d.departmentId.toLowerCase().includes(decoded) ||
+      d.departmentName.toLowerCase().includes(decoded) ||
+      d.title.toLowerCase().includes(decoded)
+    );
+    if (doc) return doc.departmentName;
+    return 'all';
+  };
+
+  const activeSpecialtyParam = searchParams.get('specialty') || specialtySlug;
+  const matchedSpecialty = findMatchedSpecialty(activeSpecialtyParam);
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>(matchedSpecialty);
 
   useEffect(() => {
-    const currentParam = searchParams.get('specialty') || (specialtySlug ? decodeURIComponent(specialtySlug) : 'all');
-    const matched = specialties.find(s => s.toLowerCase() === currentParam.toLowerCase()) || 'all';
-    setSelectedSpecialty(matched);
+    const currentParam = searchParams.get('specialty') || specialtySlug;
+    setSelectedSpecialty(findMatchedSpecialty(currentParam));
   }, [searchParams, specialtySlug]);
 
   // Handle perceived loading state when data is being loaded or filtered
@@ -195,6 +211,7 @@ export const DoctorsPage: React.FC<DoctorsPageProps> = ({ onSelectDoctor, isLoad
                   <img
                     src={doc.avatar}
                     alt={doc.name}
+                    referrerPolicy="no-referrer"
                     className="w-20 h-20 rounded-2xl object-cover ring-2 ring-slate-100 group-hover:ring-teal-500/30 transition-all flex-shrink-0"
                   />
                   <div className="min-w-0">

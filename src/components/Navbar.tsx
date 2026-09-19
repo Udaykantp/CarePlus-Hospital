@@ -27,7 +27,8 @@ import {
   Star,
   BookOpen,
   Building,
-  Info
+  Info,
+  Bell
 } from 'lucide-react';
 import { CLINIC_INFO } from '../data/clinicData';
 import { GlobalSearchBar } from './GlobalSearchBar';
@@ -500,73 +501,60 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* ================= 4. MOBILE / COMPACT APP BAR (< md:block) ================= */}
-      <div className="md:hidden px-3.5 py-2.5 flex items-center justify-between border-b border-slate-100">
+      <div className="md:hidden px-4 py-2.5 flex items-center justify-between border-b border-slate-100 bg-white">
         
         {/* Mobile Brand Logo */}
         <Link 
           to="/" 
           onClick={handleMobileLinkClick}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2.5"
         >
-          <div className="w-8 h-8 rounded-full bg-[#00897b] text-white flex items-center justify-center flex-shrink-0 shadow-2xs">
-            <Heart className="w-4 h-4 fill-white" />
+          <div className="relative w-9 h-9 rounded-full bg-[#00897b] text-white flex items-center justify-center flex-shrink-0 shadow-2xs">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="relative w-2.5 h-2.5">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-2.5 bg-white rounded-xs"></div>
+                <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2.5 h-0.5 bg-white rounded-xs"></div>
+              </div>
+            </div>
           </div>
           <div>
             <span className="text-base font-black text-slate-900 font-heading leading-tight block">
               CarePlus <span className="text-[#00897b]">Hospital</span>
             </span>
+            <p className="text-[10px] text-slate-500 font-medium tracking-tight -mt-0.5">
+              Better Health. Brighter Tomorrow.
+            </p>
           </div>
         </Link>
 
-        {/* Mobile Right Controls: Search Toggle, SOS & Hamburger */}
-        <div className="flex items-center gap-1.5">
+        {/* Mobile Right Controls: Notification Bell & Hamburger */}
+        <div className="flex items-center gap-1">
           
-          {/* Global Search Bar Toggle for Mobile */}
+          {/* Notification Bell with Badge "3" */}
           <button
             type="button"
-            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className={`p-2 rounded-xl transition-colors cursor-pointer ${
-              mobileSearchOpen ? 'bg-teal-50 text-[#00897b]' : 'text-slate-600 hover:bg-slate-100'
-            }`}
-            aria-label="Search Doctors, Services and Tests"
+            onClick={onOpenBookings}
+            className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all relative cursor-pointer"
+            aria-label="View Appointments and Notifications"
           >
-            <Search className="w-4 h-4" />
+            <Bell className="w-5 h-5 text-slate-700" />
+            <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">
+              {activeBookingsCount > 0 ? activeBookingsCount : 3}
+            </span>
           </button>
-
-          {/* Quick SOS Emergency */}
-          {onOpenEmergency ? (
-            <button
-              onClick={onOpenEmergency}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-bold active:scale-95 transition-transform"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-              </span>
-              <span>SOS</span>
-            </button>
-          ) : (
-            <a
-              href={`tel:${CLINIC_INFO.phonePrimary.replace(/[^0-9]/g, '')}`}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-bold"
-            >
-              <PhoneCall className="w-3 h-3" />
-              <span>Call</span>
-            </a>
-          )}
 
           {/* Mobile Drawer Hamburger Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all relative cursor-pointer"
+            className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all cursor-pointer"
             aria-label="Open Navigation Menu"
             aria-expanded={mobileMenuOpen}
           >
-            <Menu className="w-5 h-5" />
-            {activeBookingsCount > 0 && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#00897b] rounded-full ring-2 ring-white"></span>
-            )}
+            <Menu className="w-5 h-5 text-slate-800 stroke-[2.2]" />
           </button>
 
         </div>

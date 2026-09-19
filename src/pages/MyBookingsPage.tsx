@@ -19,6 +19,7 @@ import { AppointmentBooking } from '../types';
 import { PrintableAppointmentPassModal } from '../components/PrintableAppointmentPassModal';
 import { PrintableBookingsHistoryModal } from '../components/PrintableBookingsHistoryModal';
 import { printAppointmentPassDocument, printBookingsHistoryDocument } from '../utils/printUtils';
+import { downloadAppointmentPassPDF, downloadBookingsHistoryPDF } from '../utils/pdfGenerator';
 
 interface MyBookingsPageProps {
   bookings: AppointmentBooking[];
@@ -80,14 +81,26 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           {filtered.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setIsPrintHistoryModalOpen(true)}
-              className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-teal-400"
-            >
-              <Printer className="w-3.5 h-3.5 text-teal-700" />
-              <span>Print History Ledger</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => downloadBookingsHistoryPDF(filtered, searchPhone || undefined)}
+                className="px-3.5 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                title="Download Appointment History PDF"
+              >
+                <Download className="w-3.5 h-3.5 text-teal-700" />
+                <span>Download History (PDF)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPrintHistoryModalOpen(true)}
+                className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer hover:border-teal-400"
+              >
+                <Printer className="w-3.5 h-3.5 text-teal-700" />
+                <span className="hidden md:inline">Print History Ledger</span>
+                <span className="md:hidden">Print</span>
+              </button>
+            </div>
           )}
 
           <Link
@@ -178,12 +191,22 @@ export const MyBookingsPage: React.FC<MyBookingsPageProps> = ({
 
                   <button
                     type="button"
+                    onClick={() => downloadAppointmentPassPDF(b)}
+                    className="flex items-center gap-1.5 text-xs font-bold text-teal-800 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 border border-teal-300 px-3 py-1 rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
+                    title="Download Official Consultation Pass PDF"
+                  >
+                    <Download className="w-3.5 h-3.5 text-teal-700" />
+                    <span>Download PDF</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleOpenPrintPass(b)}
-                    className="flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1 rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
+                    className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 py-1 rounded-lg transition-all cursor-pointer shadow-2xs active:scale-95"
                     title="Print Official Consultation Pass"
                   >
-                    <Printer className="w-3.5 h-3.5 text-teal-700" />
-                    <span>Print Pass</span>
+                    <Printer className="w-3.5 h-3.5 text-slate-600" />
+                    <span>Print</span>
                   </button>
 
                   {b.status !== 'cancelled' && (

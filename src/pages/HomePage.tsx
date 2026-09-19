@@ -57,8 +57,8 @@ export const HomePage: React.FC<HomePageProps> = ({
         }}
       />
 
-      {/* 2. CarePulse Highlights & Live OPD Emergency Strip with Scroll Reveal */}
-      <section className="bg-[#f0f9f8] pt-4 pb-12 border-b border-teal-100/60 overflow-hidden">
+      {/* 2. CarePulse Highlights & Live OPD Emergency Strip with Scroll Reveal (Desktop only, mobile has 8-action launchpad) */}
+      <section className="hidden lg:block bg-[#f0f9f8] pt-4 pb-12 border-b border-teal-100/60 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           
           {/* 4 Clinical Pillars matching Hero Feature Circles with staggered reveal */}
